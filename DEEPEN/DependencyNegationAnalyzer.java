@@ -16,7 +16,12 @@ import edu.iupui.NegEx.CallKit;
 import edu.iupui.pancyst.DBReader;
 import edu.stanford.nlp.trees.TypedDependency;
 
-public class  DependencyNegationAnalyzer{
+/***
+ * Dependency Negation Analyzer class.
+ * Contains methods to check presence or absence of 
+ * terms/tokens in dependencies.
+ */
+public class DependencyNegationAnalyzer{
 
 	private static boolean isPrepWithout = false;
 	private static boolean isPrepOther = false;
@@ -25,89 +30,74 @@ public class  DependencyNegationAnalyzer{
 	private static boolean isSuggest = false;
 	private static boolean isNegationRoot = false;
 
-	//	private static HashMap<String, String> negationStatusDictionary = new HashMap<String, String>();
-	//		
-	//	public static HashMap<String, String> getNegationStatusDictionary() {
-	//		return negationStatusDictionary;
-	//	}
-	//
-	//	public void setNegationStatusDictionary(
-	//			HashMap<String, String> negationStatusDictionary) {
-	//		DependencyNegationAnalyzer.negationStatusDictionary = negationStatusDictionary;
-	//	}
-
-	//	public DependencyNegationAnalyzer()
-	//	{
-	//		DBReader databaseValues = new DBReader();
-	//		setNegationStatusDictionary(databaseValues.getNegationStatusDictionary());
-	//	}
-
+	// Check if Negation is the root term.
 	public static boolean isNegationRoot() {
 		return isNegationRoot;
 	}
-
-
+	
+	// Set if Negation is the root term.
 	public static void setNegationRoot(boolean isNegationRoot) {
 		DependencyNegationAnalyzer.isNegationRoot = isNegationRoot;
 	}
 
-
+	// Check if Dependency contains Preposition_Without
 	public static boolean isPrepWithout() {
 		return isPrepWithout;
 	}
 
-
-	public static boolean isNSubject() {
-		return isNSubject;
-	}
-
-
-	public static void setNSubject(boolean isNSubject) {
-		DependencyNegationAnalyzer.isNSubject = isNSubject;
-	}
-
-
-	public static boolean isSuggest() {
-		return isSuggest;
-	}
-
-
-	public static void setSuggest(boolean isSuggest) {
-		DependencyNegationAnalyzer.isSuggest = isSuggest;
-	}
-
-
+	// Set if Dependency contains Preposition_Without
 	public static void setPrepWithout(boolean isWithout) {
 		isPrepWithout = isWithout;
 	}
 
+	// Check if Dependency contains NSubject
+	public static boolean isNSubject() {
+		return isNSubject;
+	}
 
+	// Set if Dependency contains NSubject
+	public static void setNSubject(boolean isNSubject) {
+		DependencyNegationAnalyzer.isNSubject = isNSubject;
+	}
+
+	// Check if Dependency contains "Suggest"
+	public static boolean isSuggest() {
+		return isSuggest;
+	}
+
+	// Set if Dependency contains "Suggest"
+	public static void setSuggest(boolean isSuggest) {
+		DependencyNegationAnalyzer.isSuggest = isSuggest;
+	}
+
+	// Check if Dependency contains Preposition_Other
 	public static boolean isPrepOther() {
 		return isPrepOther;
 	}
 
-
+	// Set if Dependency contains Preposition_Other
 	public static void setPrepOther(boolean isOther) {
 		isPrepOther = isOther;
 	}
 
-
+	// Check if Dependency contains Conjunction
 	public static boolean isConjunction() {
 		return isConjunction;
 	}
 
-
+	// Set if Dependency contains Conjunction
 	public static void setConjunction(boolean isConj) {
 		isConjunction = isConj;
 	}
 
-
-	public static void setNominalSubject(boolean isNSubj) {
-		isNSubject = isNSubj;
-	}
-
+	// Check if Dependency contains NSubj
 	public static boolean isNominalSubject() {
 		return isNSubject;
+	}
+
+	// Set if Dependency contains NSubj
+	public static void setNominalSubject(boolean isNSubj) {
+		isNSubject = isNSubj;
 	}
 
 	/**
@@ -118,26 +108,17 @@ public class  DependencyNegationAnalyzer{
 	{
 		String fileName = "~/test.txt";
 
-		//		PrintWriter fileWriter = null;
-
 		DependencyNegationAnalyzer dPa = new DependencyNegationAnalyzer();
 
 		try {
-			//			fileWriter = new PrintWriter("C:/Documents and Settings/anand/Desktop/Work_Stuff/Regenstrief_Work/Analysis/Cyst_Identification_Work/Validation_Output.txt");
 			BufferedReader fileReader = new BufferedReader(new FileReader(fileName));			
 			String inputString = "";
 			String outputString = "";
 			while(null != (inputString = fileReader.readLine()))
 			{
-	
-			  
-								inputString = "pseudocyst" + "\t" +  "No peripancreatic fluid collections to suggest pseudocyst formation.2.";
-//								inputString = "pseudocyst" + "\t" +  "Resolving inflammation around the pancreatic tail without evidence of peripancreatic free fluid or pseudocyst.";
 				System.out.println(inputString);
 				outputString = dPa.AnalyzeDependencyNegation(inputString);
-				System.out.println(outputString);
-				//				fileWriter.write(outputString);
-				//				fileWriter.write("\n");	
+				System.out.println(outputString);	
 			}
 
 			fileReader.close();
@@ -147,21 +128,21 @@ public class  DependencyNegationAnalyzer{
 		}
 	}
 
-
+	/***
+	 * Main method to Analyze Dependency Negation.
+	 * @param inputString
+	 * @return Returns "Affirmed" or "Negated" for the sentence.
+	 */
 	public String AnalyzeDependencyNegation(String inputString) 
 	{
 		String outputString = "";
 		String conceptTerm = inputString.split("\t")[0];		
 		String sentence = inputString.split("\t")[1];
+		
 		List<String> specialCharacter = new ArrayList<String>();
 		Pattern regexForSpecialCharacters = Pattern.compile("[^\\w\\s]");
 		Matcher matcher = regexForSpecialCharacters.matcher(sentence);
-//		Pattern mSentence = Pattern.compile("(?i)\\w+\\.{1} ?\\d{1,2}");		
-//		
-//		Matcher mat = mSentence.matcher(sentence);
-//		if (mat.find()){
-//			sentence = sentence.replaceAll(" ?\\d\\.", "");
-//		}
+		HashMap<String, String> negationDictionary = new HashMap<String, String>();
 		
 		while(matcher.find())
 		{
@@ -180,7 +161,6 @@ public class  DependencyNegationAnalyzer{
 		sentence = sentence.replace("  ", " ");
 		inputString = conceptTerm + "\t" + sentence;
 
-		HashMap<String, String> negationDictionary = new HashMap<String, String>();
 		try {
 
 			CallKit ck = new CallKit();
@@ -249,6 +229,7 @@ public class  DependencyNegationAnalyzer{
 					}
 				}
 								
+				// If conjunction is found, split sentence by "and" and work with two parts separately.
 				if(isConjunction())
 				{
 					String[] sentenceParts = sentence.split("and");
@@ -342,7 +323,13 @@ public class  DependencyNegationAnalyzer{
 		return outputString;
 	}
 
-
+	/***
+	 * Sentence with concept term and negation tokens to check dependency.
+	 * @param sdpForSentence
+	 * @param conceptTerm
+	 * @param negationTokens
+	 * @return Production Chain of the Concept term and Negation tokens.
+	 */
 	private static String ProcessSentence(String[][] sdpForSentence, String conceptTerm, String[] negationTokens)
 	{
 		Boolean isConceptPresentInPrepOther = false; 
@@ -350,6 +337,7 @@ public class  DependencyNegationAnalyzer{
 		String productionChain = "";
 		String outputString = "";
 
+		// If "Without" is present in the dependency.
 		if(isPrepWithout())
 		{
 			StanfordDependencyParser.GetProductionChainForPrepWithoutAndRoot(sdpForSentence, Constants.PrepWithout);
@@ -370,21 +358,25 @@ public class  DependencyNegationAnalyzer{
 				StanfordDependencyParser.GenerateProductionChain(sdpForSentence, negationTokens);
 			}
 
+		// If Negation is the Root in the Dependency.
 		if(isNegationRoot())
 		{
 			StanfordDependencyParser.GetProductionChainForPrepWithoutAndRoot(sdpForSentence, Constants.RootWord);
 		}
 
+		// If dependency contains NSubj tag.
 		if(isNominalSubject())
 		{
 			StanfordDependencyParser.GenerateProductionChainForNSubj(sdpForSentence);
 		}
 
+		// If dependency contains "Suggest".
 		if(isSuggest())
 		{
 			StanfordDependencyParser.GenerateProductionChainForSuggest(sdpForSentence, negationTokens);
 		}
 
+		// If dependency contains "without".
 		if(isPrepWithout() || !isConceptPresentInPrepOther)
 		{
 			isConceptPresentInPrepOther = false;
@@ -428,8 +420,11 @@ public class  DependencyNegationAnalyzer{
 		return outputString;
 	}
 
-	/*
+	/***
 	 * Method to check if the Concept is present in the Production Chain.
+	 * @param productionChain
+	 * @param conceptTerm
+	 * @return True if concept term is present, else False.
 	 */
 	private static boolean IsConceptPresent(String productionChain, String conceptTerm) {
 
@@ -461,6 +456,11 @@ public class  DependencyNegationAnalyzer{
 		return conceptFound;
 	}	
 
+	/***
+	 * Remove duplicate terms from list of String.
+	 * @param itemList
+	 * @return List containing unique terms.
+	 */
 	public List<String> RemoveDuplicates(List<String> itemList) {
 		String tempItem = "";
 
@@ -479,6 +479,5 @@ public class  DependencyNegationAnalyzer{
 		}
 
 		return itemList;
-
 	}
 }
